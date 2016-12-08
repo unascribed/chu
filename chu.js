@@ -44,7 +44,7 @@ server.post(config.http.path, (req, res, next) => {
 		var branch = req.body.ref.slice(11)+'/';
 		if (branch === req.body.repository.default_branch) branch = '';
 		req.body.commits.forEach((commit) => {
-			msg(channel, repo, 'New commit \x02'+branch+commit.id.slice(0, 8)+'\x0f by '+sender, commit.message.split('\n')[0], commit.url); 
+			msg(channel, repo, 'Commit \x0309\x02pushed\x0f by '+sender, '\x02'+branch+commit.id.slice(0, 8)+'\x0f '+commit.message.split('\n')[0], commit.url); 
 		});
 	} else if (event === 'repository') {
 		if (action === 'created') {
