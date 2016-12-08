@@ -1,0 +1,25 @@
+{
+  "name": "chu",
+  "version": "1.0.0",
+  "description": "a GitHub webhook-based IRC bot",
+  "main": "chu.js",
+  "dependencies": {
+    "irc": "^0.5.2",
+    "request": "^2.79.0",
+    "restify": "^4.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unascribed/chu.git"
+  },
+  "author": "Aesen \"unascribed\" Vismea",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/unascribed/chu/issues"
+  },
+  "homepage": "https://github.com/unascribed/chu#readme"
+}

@@ -1,0 +1,18 @@
+{
+	"irc": {
+		"server": "irc.esper.net:6697",
+		"nick": "unascribedcommitbot",
+		"password": null,
+		"secure": true,
+		"selfSigned": false,
+		"floodProtection": true,
+		"floodProtectionDelay": 1000,
+		"homeChannel": "unascribed"
+	},
+	"http": {
+		"path": "/totally-awesome-commit-bot",
+		"port": 80,
+		"bind": "0.0.0.0"
+	},
+	"messageFormat": "\u000306[%s]\u000f %s: \u000f%s \u000302 %s"
+}
