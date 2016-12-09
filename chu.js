@@ -22,44 +22,44 @@ server.post(config.http.path, (req, res, next) => {
 	if (event === 'issues') {
 		var issue = req.body.issue;
 		if (action === 'opened') {
-			msg(channel, repo, 'Issue #'+issue.number+' \x0309\x02opened\x0f by '+sender, issue.title, issue.html_url);
+			msg(channel, repo, 'Issue #'+issue.number+' §a§lopened§r by '+sender, issue.title, issue.html_url);
 		} else if (action === 'closed') {
-			msg(channel, repo, 'Issue #'+issue.number+' \x0304\x02closed\x0f by '+sender, issue.title, issue.html_url);
+			msg(channel, repo, 'Issue #'+issue.number+' §c§lclosed§r by '+sender, issue.title, issue.html_url);
 		} else if (action === 'reopened') {
-			msg(channel, repo, 'Issue #'+issue.number+' \x0308\x02reopened\x0f by '+sender, issue.title, issue.html_url);
+			msg(channel, repo, 'Issue #'+issue.number+' §e§lreopened§r by '+sender, issue.title, issue.html_url);
 		}
 	} else if (event === 'pull_request') {
 		var pr = req.body.pull_request;
 		if (action === 'opened') {
-			msg(channel, repo, 'Pull #'+pr.number+' \x0309\x02opened\x0f by '+sender, pr.title, pr.html_url);
+			msg(channel, repo, 'Pull #'+pr.number+' §a§lopened§r by '+sender, pr.title, pr.html_url);
 		} else if (action === 'closed') {
 			if (req.body.pull_request.merged) {
-				msg(channel, repo, 'Pull #'+pr.number+' \x0313\x02merged\x0f by '+sender, pr.title, pr.html_url);
+				msg(channel, repo, 'Pull #'+pr.number+' §d§lmerged§r by '+sender, pr.title, pr.html_url);
 			} else {
-				msg(channel, repo, 'Pull #'+pr.number+' \x0304\x02closed\x0f by '+sender, pr.title, pr.html_url);
+				msg(channel, repo, 'Pull #'+pr.number+' §c§lclosed§r by '+sender, pr.title, pr.html_url);
 			}
 		} else if (action === 'reopened') {
-			msg(channel, repo, 'Pull #'+pr.number+' \x0308\x02reopened\x0f by '+sender, pr.title, pr.html_url);
+			msg(channel, repo, 'Pull #'+pr.number+' §e§lreopened§r by '+sender, pr.title, pr.html_url);
 		}
 	} else if (event === 'push') {
 		var branch = req.body.ref.slice(11)+'/';
 		if (branch === req.body.repository.default_branch) branch = '';
 		req.body.commits.forEach((commit) => {
-			msg(channel, repo, 'Commit \x0309\x02pushed\x0f by '+sender, '\x02'+branch+commit.id.slice(0, 8)+'\x0f '+commit.message.split('\n')[0], commit.url); 
+			msg(channel, repo, 'Commit §a§lpushed§r by '+sender, '§l'+branch+commit.id.slice(0, 8)+'§r '+commit.message.split('\n')[0], commit.url); 
 		});
 	} else if (event === 'repository') {
 		if (action === 'created') {
-			msg(channel, repo, 'Repository \x0309\x02created\x0f by '+sender, req.body.repository.description, req.body.repository.html_url);
+			msg(channel, repo, 'Repository §a§lcreated§r by '+sender, req.body.repository.description, req.body.repository.html_url);
 		} else if (action === 'deleted') {
-			msg(channel, repo, 'Repository \x0304\x02deleted\x0f by '+sender, '', null);
+			msg(channel, repo, 'Repository §c§ldeleted§r by '+sender, '', null);
 		}
 	} else if (event === 'organization') {
 		if (action === 'member_added') {
-			msg(channel, org, req.body.membership.user.login+' \x0304\x02joined\x0f', '', null);
+			msg(channel, org, req.body.membership.user.login+' §c§ljoined§r', '', null);
 		} else if (action === 'member_removed') {
-			msg(channel, org, req.body.membership.user.login+' \x0304\x02left\x0f', '', null);
+			msg(channel, org, req.body.membership.user.login+' §c§lleft§r', '', null);
 		} else if (action === 'member_invited') {
-			msg(channel, org, req.body.invitation.login+' \x0313\x02invited\x0f by '+sender, '', null);
+			msg(channel, org, req.body.invitation.login+' §d§linvited§r by '+sender, '', null);
 		}
 	} else if (event === "ping") {
 		msg(channel, req.body.hook.type === "Repository" ? req.body.repository.full_name : req.body.organization.login+'/*', 'Bot connected by '+sender, req.body.zen, null);
@@ -69,34 +69,34 @@ server.post(config.http.path, (req, res, next) => {
 	} else if (event === "gollum") {
 		req.body.pages.forEach((page) => {
 			if (page.action === "created") {
-				msg(channel, repo, 'Wiki page \x0309\x02created\x0f by '+sender, page.title, page.html_url); 
+				msg(channel, repo, 'Wiki page §a§lcreated§r by '+sender, page.title, page.html_url); 
 			} else if (page.action === "edited") {
-				msg(channel, repo, 'Wiki page \x0308\x02modified\x0f by '+sender, page.title, page.html_url); 
+				msg(channel, repo, 'Wiki page §e§lmodified§r by '+sender, page.title, page.html_url); 
 			}
 		});
 	} else if (event === "release") {
-		msg(channel, repo, 'Release \x0309\x02published\x0f by '+sender, req.body.release.name || req.body.release.tag_name, req.body.release.html_url); 
+		msg(channel, repo, 'Release §a§lpublished§r by '+sender, req.body.release.name || req.body.release.tag_name, req.body.release.html_url); 
 	} else if (event === "create") {
 		if (req.body.ref_type === "branch") {
 			var ref = req.body.ref.replace("refs/heads/", "");
-			msg(channel, repo, 'Branch \x0309\x02created\x0f by '+sender, ref, req.body.repository.html_url+"/tree/"+ref); 
+			msg(channel, repo, 'Branch §a§lcreated§r by '+sender, ref, req.body.repository.html_url+"/tree/"+ref); 
 		}
 	} else if (event === "delete") {
 		if (req.body.ref_type === "branch") {
 			var ref = req.body.ref.replace("refs/heads/", "");
-			msg(channel, repo, 'Branch \x0304\x02deleted\x0f by '+sender, ref, req.body.repository.html_url+"/tree/"+ref); 
+			msg(channel, repo, 'Branch §c§ldeleted§r by '+sender, ref, req.body.repository.html_url+"/tree/"+ref); 
 		}
 	} else if (event === "team") {
 		if (action === "created") {
-			msg(channel, org, 'Team \x0309\x02created\x0f by '+sender, req.body.team.name, null); 
+			msg(channel, org, 'Team §a§lcreated§r by '+sender, req.body.team.name, null); 
 		} else if (action === "deleted") {
-			msg(channel, org, 'Team \x0304\x02deleted\x0f by '+sender, req.body.team.name, null); 
+			msg(channel, org, 'Team §c§ldeleted§r by '+sender, req.body.team.name, null); 
 		} else if (action === "edited") {
-			msg(channel, org, 'Team \x0308\x02edited\x0f by '+sender, req.body.team.name, null); 
+			msg(channel, org, 'Team §e§ledited§r by '+sender, req.body.team.name, null); 
 		} else if (action === "added_to_repository") {
-			msg(channel, repo, 'Team \x0309\x02added\x0f to repository by '+sender, req.body.team.name, null); 
+			msg(channel, repo, 'Team §a§ladded§r to repository by '+sender, req.body.team.name, null); 
 		} else if (action === "removed_from_repository") {
-			msg(channel, repo, 'Team \x0304\x02removed\x0f from repository by '+sender, req.body.team.name, null); 
+			msg(channel, repo, 'Team §c§lremoved§r from repository by '+sender, req.body.team.name, null); 
 		}
 	}
 	res.send(200, 'OK');
@@ -104,15 +104,50 @@ server.post(config.http.path, (req, res, next) => {
 
 server.listen(config.http.port, config.http.bind);
 
+// I've spent WAY too much time manually writing Minecraft color codes, so this
+// is actually /easier/ for me than some utility methods that take names
+var mcCodes = {
+	"§0": "\x0301", // black
+	"§1": "\x0302", // navy
+	"§2": "\x0303", // green
+	"§3": "\x0310", // teal
+	"§4": "\x0305", // maroon
+	"§5": "\x0306", // purple
+	"§6": "\x0307", // olive
+	"§7": "\x0315", // silver
+	"§8": "\x0314", // grey
+	"§9": "\x0312", // blue
+	"§a": "\x0309", // green
+	"§b": "\x0311", // cyan
+	"§c": "\x0304", // red
+	"§d": "\x0313", // pink
+	"§e": "\x0308", // yellow
+	"§f": "\x0300", // white
+	
+	"§l": "\x02", // bold
+	"§o": "\x1D", // italic
+	"§m": "",     // strike, no IRC equivalent
+	"§n": "\x1F", // underline
+	"§r": "\x0F", // reset
+}
+
 function msg(channel, repo, msg, desc, url) {
 	console.log('[%s] %s: %s %s', repo, msg, desc, url);
 	if (url != null) {
 		request.post('https://git.io/create', {
 			form:{url:url}
 		}, (err, res, body) => {
-			client.say(channel, util.format(config.messageFormat, repo, msg, desc, body ? 'https://git.io/'+body : url));
+			client.say(channel, substituteColors(util.format(config.messageFormat, repo, msg, desc, body ? 'https://git.io/'+body : url)));
 		});
 	} else {
-		client.say(channel, util.format(config.messageFormat, repo, msg, desc, ''));
+		client.say(channel, substituteColors(util.format(config.messageFormat, repo, msg, desc, '')));
 	}
 }
+
+function substituteColors(str) {
+	Object.keys(mcCodes).forEach((k) => {
+		str = str.replace(new RegExp(k, "gi"), mcCodes[k]);
+	});
+	return str;
+}
+

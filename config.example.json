@@ -14,5 +14,5 @@
 		"port": 80,
 		"bind": "0.0.0.0"
 	},
-	"messageFormat": "\u000306[%s]\u000f %s: \u000f%s \u000302 %s"
+	"messageFormat": "§5[%s]§r %s§r: %s §1 %s"
 }
