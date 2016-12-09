@@ -17,6 +17,7 @@ server.post(config.http.path, (req, res, next) => {
 	var event = req.header('X-GitHub-Event');
 	var action = req.body.action;
 	var repo = req.body.repository ? req.body.repository.full_name : null;
+	var org = req.body.organization ? req.body.organization.login : null;
 	var sender = req.body.sender.login;
 	if (event === 'issues') {
 		var issue = req.body.issue;
@@ -53,7 +54,6 @@ server.post(config.http.path, (req, res, next) => {
 			msg(channel, repo, 'Repository \x0304\x02deleted\x0f by '+sender, '', null);
 		}
 	} else if (event === 'organization') {
-		var org = req.body.organization.login;
 		if (action === 'member_added') {
 			msg(channel, org, req.body.membership.user.login+' \x0304\x02joined\x0f', '', null);
 		} else if (action === 'member_removed') {
@@ -85,6 +85,18 @@ server.post(config.http.path, (req, res, next) => {
 		if (req.body.ref_type === "branch") {
 			var ref = req.body.ref.replace("refs/heads/", "");
 			msg(channel, repo, 'Branch \x0304\x02deleted\x0f by '+sender, ref, req.body.repository.html_url+"/tree/"+ref); 
+		}
+	} else if (event === "team") {
+		if (action === "created") {
+			msg(channel, org, 'Team \x0309\x02created\x0f by '+sender, req.body.team.name, null); 
+		} else if (action === "deleted") {
+			msg(channel, org, 'Team \x0304\x02deleted\x0f by '+sender, req.body.team.name, null); 
+		} else if (action === "edited") {
+			msg(channel, org, 'Team \x0308\x02edited\x0f by '+sender, req.body.team.name, null); 
+		} else if (action === "added_to_repository") {
+			msg(channel, repo, 'Team \x0309\x02added\x0f to repository by '+sender, req.body.team.name, null); 
+		} else if (action === "removed_from_repository") {
+			msg(channel, repo, 'Team \x0304\x02removed\x0f from repository by '+sender, req.body.team.name, null); 
 		}
 	}
 	res.send(200, 'OK');
