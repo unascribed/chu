@@ -98,6 +98,16 @@ server.post(config.http.path, (req, res, next) => {
 		} else if (action === "removed_from_repository") {
 			msg(channel, repo, 'Team §c§lremoved§r from repository by '+sender, req.body.team.name, null); 
 		}
+	} else if (event === 'issue_comment') {
+		var issue = req.body.issue;
+		var comment = req.body.comment;
+		if (action === 'created') {
+			msg(channel, repo, 'Comment on issue #'+issue.number+' §a§lposted§r by '+sender, issue.title, comment.html_url);
+		} else if (action === 'deleted') {
+			msg(channel, repo, 'Comment on issue #'+issue.number+' §c§ldeleted§r by '+sender, issue.title, comment.html_url);
+		} else if (action === 'edited') {
+			msg(channel, repo, 'Comment on issue #'+issue.number+' §e§ledited§r by '+sender, issue.title, comment.html_url);
+		}
 	}
 	res.send(200, 'OK');
 });
