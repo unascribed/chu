@@ -147,7 +147,7 @@ function msg(channel, repo, msg, desc, url) {
 		request.post('https://git.io/create', {
 			form:{url:url}
 		}, (err, res, body) => {
-			client.say(channel, substituteColors(util.format(config.messageFormat, repo, msg, desc, err || res.errorCode != 200 ? url : 'https://git.io/'+bodyy)));
+			client.say(channel, substituteColors(util.format(config.messageFormat, repo, msg, desc, err || (!res || res.statusCode != 200) ? url : 'https://git.io/'+bodyy)));
 		});
 	} else {
 		client.say(channel, substituteColors(util.format(config.messageFormat, repo, msg, desc, '')));
