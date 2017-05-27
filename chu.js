@@ -113,9 +113,7 @@ server.post(config.http.path, (req, res, next) => {
 		if (branch === req.body.repository.default_branch) branch = '';
 		var state = req.body.state;
 		var commit = req.body.sha.slice(0, 8);
-		if (state === 'pending') {
-			msg(channel, repo, 'Build §e§lin progress§r...', '§l'+branch+commit+'§r');
-		} else if (state === 'success') {
+		if (state === 'success') {
 			msg(channel, repo, 'Build §a§lsuccessful§r!', '§l'+branch+commit+'§r');
 		} else if (state === 'failure') {
 			msg(channel, repo, 'Build §c§lfailed§r.', '§l'+branch+commit+'§r');
