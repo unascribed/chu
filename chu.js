@@ -108,6 +108,20 @@ server.post(config.http.path, (req, res, next) => {
 		} else if (action === 'edited') {
 			msg(channel, repo, 'Comment on issue #'+issue.number+' §e§ledited§r by '+sender, issue.title, comment.html_url);
 		}
+	} else if (event === 'status') {
+		var branch = req.body.branches[0].name+'/';
+		if (branch === req.body.repository.default_branch) branch = '';
+		var state = req.body.state;
+		var commit = req.body.sha.slice(0, 8);
+		if (state === 'pending') {
+			msg(channel, repo, 'Build §e§lin progress§r...', '§l'+branch+commit+'§r');
+		} else if (state === 'success') {
+			msg(channel, repo, 'Build §a§lsuccessful§r!', '§l'+branch+commit+'§r');
+		} else if (state === 'failure') {
+			msg(channel, repo, 'Build §c§lfailed§r.', '§l'+branch+commit+'§r');
+		} else if (state === 'error') {
+			msg(channel, repo, 'Build §7§lerrored§r!', '§l'+branch+commit+'§r');
+		}
 	}
 	res.send(200, 'OK');
 });
