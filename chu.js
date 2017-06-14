@@ -41,6 +41,8 @@ server.post(config.http.path, (req, res, next) => {
 				}
 			} else if (action === 'reopened') {
 				msg(channel, repo, 'Pull #'+pr.number+' §e§lreopened§r by '+sender, pr.title, pr.html_url);
+			} else if (action === "review_requested") {
+				msg(channel, repo, 'Review on pull request #'+req.body.pull_request.number+' from '+req.body.requested_reviewer.login+' §lrequested§r by '+sender, req.body.pull_request.title, req.body.pull_request.html_url);
 			}
 		} else if (event === 'push') {
 			var branch = req.body.ref.slice(11)+'/';
@@ -56,7 +58,7 @@ server.post(config.http.path, (req, res, next) => {
 			}
 		} else if (event === 'organization') {
 			if (action === 'member_added') {
-				msg(channel, org, req.body.membership.user.login+' §c§ljoined§r', '', null);
+				msg(channel, org, req.body.membership.user.login+' §a§ljoined§r', '', null);
 			} else if (action === 'member_removed') {
 				msg(channel, org, req.body.membership.user.login+' §c§lleft§r', '', null);
 			} else if (action === 'member_invited') {
@@ -102,12 +104,13 @@ server.post(config.http.path, (req, res, next) => {
 		} else if (event === 'issue_comment') {
 			var issue = req.body.issue;
 			var comment = req.body.comment;
+			var type = (req.body.issue.pull_request ? "pull request" : "issue");
 			if (action === 'created') {
-				msg(channel, repo, 'Comment on issue #'+issue.number+' §a§lposted§r by '+sender, issue.title, comment.html_url);
+				msg(channel, repo, 'Comment on '+type+' #'+issue.number+' §a§lposted§r by '+sender, issue.title, comment.html_url);
 			} else if (action === 'deleted') {
-				msg(channel, repo, 'Comment on issue #'+issue.number+' §c§ldeleted§r by '+sender, issue.title, comment.html_url);
+				msg(channel, repo, 'Comment on '+type+' #'+issue.number+' §c§ldeleted§r by '+sender, issue.title, comment.html_url);
 			} else if (action === 'edited') {
-				msg(channel, repo, 'Comment on issue #'+issue.number+' §e§ledited§r by '+sender, issue.title, comment.html_url);
+				msg(channel, repo, 'Comment on '+type+' #'+issue.number+' §e§ledited§r by '+sender, issue.title, comment.html_url);
 			}
 		} else if (event === 'status') {
 			var branch = req.body.branches[0].name+'/';
@@ -120,6 +123,18 @@ server.post(config.http.path, (req, res, next) => {
 				msg(channel, repo, 'Build §c§lfailed§r.', '§l'+branch+commit+'§r');
 			} else if (state === 'error') {
 				msg(channel, repo, 'Build §7§lerrored§r!', '§l'+branch+commit+'§r');
+			}
+		} else if (event === "pull_request_review") {
+			var issue = req.body.pull_request;
+			var review = req.body.review;
+			if (req.body.action === "submitted") {
+				if (review.state === "approved") {
+					msg(channel, repo, 'Pull request #'+issue.number+' §a§lapproved§r by '+sender, issue.title, review.html_url);
+				} else if (review.state === "changes_requested") {
+					msg(channel, repo, 'Pull request #'+issue.number+' §c§lrejected§r by '+sender, issue.title, review.html_url);
+				}
+			} else if (req.body.action === "dismissed") {
+				msg(channel, repo, 'Review on pull request #'+issue.number+' §7§ldismissed§r by <unknown>', issue.title, review.html_url);
 			}
 		}
 		res.send(200, 'OK');
@@ -146,22 +161,26 @@ server.post(config.http.path, (req, res, next) => {
 			if (objectType === "Commit") {
 				msg(channel, repo, 'Comment on commit '+req.body.commit.id.slice(0, 8)+' §a§lposted§r by '+sender, req.body.commit.message.split('\n')[0], null, true);
 			} else if (objectType === "MergeRequest") {
-				msg(channel, repo, 'Comment on merge request #'+req.body.merge_request.id+' §a§lposted§r by '+sender, req.body.merge_request.title, null, true);
+				msg(channel, repo, 'Comment on merge request !'+req.body.merge_request.iid+' §a§lposted§r by '+sender, req.body.merge_request.title, null, true);
 			} else if (objectType === "Issue") {
 				msg(channel, repo, 'Comment on issue #'+req.body.issue.iid+' §a§lposted§r by '+sender, req.body.issue.title, null, true);
 			} else if (objectType === "Snippet") {
-				msg(channel, repo, 'Comment on snippet #'+req.body.snippet.iid+' §a§lposted§r by '+sender, req.body.snippet.title, null, true);
+				msg(channel, repo, 'Comment on snippet $'+req.body.snippet.id+' §a§lposted§r by '+sender, req.body.snippet.title, null, true);
 			}
 		} else if (event === "Merge Request Hook") {
 			var sender = req.body.user.username;
 			var issue = req.body.object_attributes;
 			var action = issue.action;
 			if (action === 'open') {
-				msg(channel, repo, 'Issue #'+issue.iid+' §a§lopened§r by '+sender, issue.title, false, true);
+				msg(channel, repo, 'Merge request !'+issue.iid+' §a§lopened§r by '+sender, issue.title, false, true);
 			} else if (action === 'close') {
-				msg(channel, repo, 'Issue #'+issue.iid+' §c§lclosed§r by '+sender, issue.title, false, true);
+				msg(channel, repo, 'Merge request !'+issue.iid+' §c§lclosed§r by '+sender, issue.title, false, true);
 			} else if (action === 'reopen') {
-				msg(channel, repo, 'Issue #'+issue.iid+' §e§lreopened§r by '+sender, issue.title, false, true);
+				msg(channel, repo, 'Merge request !'+issue.iid+' §e§lreopened§r by '+sender, issue.title, false, true);
+			} else if (action === 'update') {
+				msg(channel, repo, 'Merge request !'+issue.iid+' §e§lupdated§r by '+sender, issue.title, false, true);
+			} else if (action === 'merge') {
+				msg(channel, repo, 'Merge request !'+issue.iid+' §d§lmerged§r by '+sender, issue.title, false, true);
 			}
 		} else if (event === "Issue Hook") {
 			var sender = req.body.user.username;
