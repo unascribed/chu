@@ -195,6 +195,29 @@ server.post(config.http.path, (req, res, next) => {
 			}
 		}
 		res.send(200, 'OK');
+	} else if (req.body.monitorId) {
+		if (req.body.alertType == 1) {
+			client.say(channel, substituteColors("§l"+req.body.monitorFriendlyName+"§r is now §c§lDOWN"));
+		} else if (req.body.alertType == 2) {
+			var time;
+			var totalSecs = req.body.alertDuration;
+			var totalMins = Math.floor(req.body.alertDuration/60);
+
+			var secs = totalSecs%60;
+			var mins = totalMins%60;
+			var hours = Math.floor(totalMins/60);
+
+			var time = secs+"s";
+
+			if (mins > 0) {
+				time = mins+"m"+time;
+			}
+			if (hours > 0) {
+				time = hours+"h"+time;
+			}
+
+			client.say(channel, substituteColors("§l"+req.body.monitorFriendlyName+"§r is now §2§lUP§r; was down for "+time));
+		}
 	} else {
 		res.send(404);
 	}
