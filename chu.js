@@ -118,11 +118,11 @@ server.post(config.http.path, (req, res, next) => {
 			var state = req.body.state;
 			var commit = req.body.sha.slice(0, 8);
 			if (state === 'success') {
-				msg(channel, repo, 'Build §a§lsuccessful§r!', '§l'+branch+commit+'§r');
+				msg(channel, repo, 'Build §a§lsuccessful§r', '§l'+branch+commit+'§r');
 			} else if (state === 'failure') {
-				msg(channel, repo, 'Build §c§lfailed§r.', '§l'+branch+commit+'§r');
+				msg(channel, repo, 'Build §c§lfailed§r', '§l'+branch+commit+'§r');
 			} else if (state === 'error') {
-				msg(channel, repo, 'Build §7§lerrored§r!', '§l'+branch+commit+'§r');
+				msg(channel, repo, 'Build §7§lerrored§r', '§l'+branch+commit+'§r');
 			}
 		} else if (event === "pull_request_review") {
 			var issue = req.body.pull_request;
@@ -218,7 +218,14 @@ server.post(config.http.path, (req, res, next) => {
 
 			client.say(channel, substituteColors("§l"+req.body.monitorFriendlyName+"§r is now §2§lUP§r; was down for "+time));
 		}
-	} else {
+	} else if (req.body.buildUrl) {
+        var name = config.jenkins.projectNameMap[req.body.projectName] || req.body.projectName;
+        if (req.body.event === "success") {
+            msg(channel, name, 'Build §a§lsuccessful§r', '§l'+req.body.buildName+'§r', null, true);
+        } else if (req.body.event === "failure") {
+            msg(channel, name, 'Build §c§lfailed§r', '§l'+req.body.buildName+'§r', null, true);
+        }
+    } else {
 		res.send(404);
 	}
 });

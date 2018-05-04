@@ -18,6 +18,11 @@
 		"url": "https://gitlab.com/api/v4/",
 		"token": "my_private_token"
 	},
+	"jenkins": {
+		"projectNameMap": {
+			"myJob": "OurGroup/MyProject"
+		}
+	},
 	"messageFormat": "§5[%s]§r %s§r: %s §1 %s",
 	"messageFormatGitlab": "§6[%s]§r %s§r: %s §1 %s"
 }
