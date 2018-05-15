@@ -47,9 +47,13 @@ server.post(config.http.path, (req, res, next) => {
 		} else if (event === 'push') {
 			var branch = req.body.ref.slice(11)+'/';
 			if (branch === req.body.repository.default_branch) branch = '';
-			req.body.commits.forEach((commit) => {
-				msg(channel, repo, 'Commit §a§lpushed§r by '+sender, '§l'+branch+commit.id.slice(0, 8)+'§r '+commit.message.split('\n')[0], commit.url);
-			});
+			if (req.body.commits.length <= 3) {
+				req.body.commits.forEach((commit) => {
+					msg(channel, repo, 'Commit §a§lpushed§r by '+sender, '§l'+branch+commit.id.slice(0, 8)+'§r '+commit.message.split('\n')[0], commit.url);
+				});
+			} else {
+				msg(channel, repo, req.body.commits.length+' commits §a§lpushed§r by '+sender, '§l'+branch+req.body.before.slice(0, 8)+' -> '+branch+req.body.after.slice(0, 8)+'§r', req.body.compare);
+			}
 		} else if (event === 'repository') {
 			if (action === 'created') {
 				msg(channel, repo, 'Repository §a§lcreated§r by '+sender, req.body.repository.description, req.body.repository.html_url);
